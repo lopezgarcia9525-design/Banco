@@ -2,7 +2,7 @@ using System;
 
 namespace BancoConsola
 {
-// *********************** CLIENTES BANCO ****************************
+    // ********* CLIENTES ********************************
     class Cliente
     {
         public string Cedula;
@@ -19,7 +19,7 @@ namespace BancoConsola
         }
     }
 
-// *********************** NODO DE LOS CLIENTES ************************
+    // ******** NODO CLIENTE ***************************************
     class NodoCliente
     {
         public Cliente Datos;
@@ -32,7 +32,7 @@ namespace BancoConsola
         }
     }
 
-// ****************** LISTAS ENLAZADAS  *******************************
+    // ************* LISTA ENLAZADA ************************************
     class ListaClientes
     {
         private NodoCliente cabeza;
@@ -42,14 +42,14 @@ namespace BancoConsola
             cabeza = null;
         }
 
+        // ****** VALIDAR CLIENTE DUPLICADO ***********************************
         public bool ClienteExiste(string cedula, string cuenta)
         {
             NodoCliente actual = cabeza;
 
             while (actual != null)
             {
-                if (actual.Datos.Cedula == cedula ||
-                    actual.Datos.NumeroCuenta == cuenta)
+                if (actual.Datos.Cedula == cedula || actual.Datos.NumeroCuenta == cuenta)
                 {
                     return true;
                 }
@@ -60,6 +60,7 @@ namespace BancoConsola
             return false;
         }
 
+        // ******* AGREGAR CLIENTE *******************************************
         public void AgregarCliente(Cliente cliente)
         {
             NodoCliente nuevo = new NodoCliente(cliente);
@@ -81,6 +82,7 @@ namespace BancoConsola
             }
         }
 
+        // ********** BUSCAR LOS CLIENTE *************************************
         public Cliente BuscarClientePorCuenta(string cuenta)
         {
             NodoCliente actual = cabeza;
@@ -98,6 +100,7 @@ namespace BancoConsola
             return null;
         }
 
+        // ******** MOSTRAR CLIENTES REGISTRADOS O NO ******************
         public void MostrarClientes()
         {
             if (cabeza == null)
@@ -110,7 +113,7 @@ namespace BancoConsola
 
             while (actual != null)
             {
-                Console.WriteLine("*********************************");
+                Console.WriteLine("**************************************");
                 Console.WriteLine("Cedula: " + actual.Datos.Cedula);
                 Console.WriteLine("Nombre: " + actual.Datos.Nombre);
                 Console.WriteLine("Cuenta: " + actual.Datos.NumeroCuenta);
@@ -120,9 +123,11 @@ namespace BancoConsola
             }
         }
 
+        // ********** CONTAR CLIENTES ******************************
         public int ContarClientes()
         {
             int contador = 0;
+
             NodoCliente actual = cabeza;
 
             while (actual != null)
@@ -130,12 +135,15 @@ namespace BancoConsola
                 contador++;
                 actual = actual.Siguiente;
             }
+
             return contador;
         }
 
+        // *******  TOTAL DINERO ********************************
         public double TotalDinero()
         {
             double total = 0;
+
             NodoCliente actual = cabeza;
 
             while (actual != null)
@@ -143,11 +151,12 @@ namespace BancoConsola
                 total += actual.Datos.Saldo;
                 actual = actual.Siguiente;
             }
+
             return total;
         }
     }
 
-// ************* COLA ****************************
+    // ****** NODO COLA DE LOS CLIENTES *************************************** 
     class NodoCola
     {
         public Cliente Datos;
@@ -160,6 +169,7 @@ namespace BancoConsola
         }
     }
 
+    // ******** COLA DE ATENCION DE LOS CLIENTES ****************************
     class ColaAtencion
     {
         private NodoCola frente;
@@ -205,7 +215,8 @@ namespace BancoConsola
             }
         }
 
-        public void MostrarCola()
+        // ************* MOSTRAR COLA DE LOS CLIENTES ********************************
+       public void MostrarCola()
         {
             if (frente == null)
             {
@@ -215,17 +226,18 @@ namespace BancoConsola
 
             NodoCola actual = frente;
 
-            Console.WriteLine("===== COLA DE ATENCION =====");
+            Console.WriteLine(" ***** COLA DE ATENCION ******* ");
 
             while (actual != null)
             {
                 Console.WriteLine(actual.Datos.Nombre + " - Cuenta: " + actual.Datos.NumeroCuenta);
+
                 actual = actual.Siguiente;
             }
         }
     }
 
-// ********************** TRANSACCIONES DEL BANCO *************************
+    // ******* TRANSACCIONES DE LOS  CLIENTE ********************
     class Transaccion
     {
         public string Tipo;
@@ -240,7 +252,7 @@ namespace BancoConsola
         }
     }
 
-// ********************** PILA ******************
+    // *********** NODO DE PILA *************************************
     class NodoPila
     {
         public Transaccion Datos;
@@ -253,6 +265,7 @@ namespace BancoConsola
         }
     }
 
+    // ******* PILA DE TRANSACCIONES *****************************************
     class PilaTransacciones
     {
         private NodoPila cima;
@@ -279,17 +292,17 @@ namespace BancoConsola
 
             Transaccion temp = cima.Datos;
             cima = cima.Siguiente;
-
             return temp;
         }
 
-        public bool EstaVacia()
+    // ********* VALIDAR VACIA *****************************************
+    public bool EstaVacia()
         {
             return cima == null;
         }
     }
 
-// ********************** BANCO *************************
+    // ********* BANCO *********************************
     class Banco
     {
         private ListaClientes listaClientes;
@@ -302,24 +315,90 @@ namespace BancoConsola
             cola = new ColaAtencion();
             pila = new PilaTransacciones();
         }
-// **************** REGISTRO CLIENTE EN EL BANCO **********************
+
+        // ***** VALIDACION DE NUMEROS *****************************
+        private bool EsSoloNumeros(string texto)
+        {
+            for (int i = 0; i < texto.Length; i++)
+            {
+                if (texto[i] < '0' || texto[i] > '9')
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // ********* REGISTRO DE LOS CLIENTE ***************************
         public void RegistrarCliente()
         {
-            Console.Write("Cedula: ");
-            string cedula = Console.ReadLine();
+            string cedula;
 
-            Console.Write("Nombre Completo: ");
+            do
+            {
+                Console.Write("Cedula (6 a 10 digitos): ");
+                cedula = Console.ReadLine();
+
+                if (!EsSoloNumeros(cedula))
+                {
+                    Console.WriteLine("La cedula solo puede contener numeros.");
+                    continue;
+                }
+
+                if (cedula.Length < 6 || cedula.Length > 10)
+                {
+                    Console.WriteLine("La cedula debe tener entre 6 y 10 digitos.");
+                }
+
+            } while (!EsSoloNumeros(cedula) || cedula.Length < 6 || cedula.Length > 10);
+
+            Console.Write("Nombre completo: ");
             string nombre = Console.ReadLine();
+            
 
-            Console.Write("Numero de cuenta: ");
-            string cuenta = Console.ReadLine();
+            string cuenta;
 
-            Console.Write("Saldo inicial: ");
-            double saldo = Convert.ToDouble(Console.ReadLine());
+            do
+            {
+                Console.Write("Numero de cuenta (11 digitos): ");
+                cuenta = Console.ReadLine();
+
+                if (!EsSoloNumeros(cuenta))
+                {
+                    Console.WriteLine("La cuenta solo puede contener numeros.");
+                    continue;
+                }
+
+                if (cuenta.Length != 11)
+                {
+                    Console.WriteLine("La cuenta debe tener exactamente 11 digitos.");
+                }
+
+            } while (!EsSoloNumeros(cuenta) || cuenta.Length != 11);
+
+            double saldo;
+
+            do
+            {
+                Console.Write("Saldo inicial: ");
+
+                if (!double.TryParse(Console.ReadLine(), out saldo))
+                {
+                    Console.WriteLine("Ingrese un numero valido.");
+                    saldo = -1;
+                }
+
+                if (saldo < 0)
+                {
+                    Console.WriteLine("El saldo no puede ser negativo.");
+                }
+
+            } while (saldo < 0);
 
             if (listaClientes.ClienteExiste(cedula, cuenta))
             {
-                Console.WriteLine("Cliente ya registrado.");
+                Console.WriteLine("El cliente ya existe.");
                 return;
             }
 
@@ -328,9 +407,10 @@ namespace BancoConsola
             Console.WriteLine("Cliente registrado correctamente.");
         }
 
+        // ******* BUSCAR LOS CLIENTE YA REGISTRADOS ******************************
         public void BuscarCliente()
         {
-            Console.Write("Ingrese numero de cuenta: ");
+            Console.Write("Numero de cuenta: ");
             string cuenta = Console.ReadLine();
 
             Cliente cliente = listaClientes.BuscarClientePorCuenta(cuenta);
@@ -338,20 +418,23 @@ namespace BancoConsola
             if (cliente == null)
             {
                 Console.WriteLine("Cliente no encontrado.");
+                return;
             }
-            else
-            {
-                Console.WriteLine("Nombre: " + cliente.Nombre);
-                Console.WriteLine("Cedula: " + cliente.Cedula);
-                Console.WriteLine("Saldo: $" + cliente.Saldo);
-            }
+
+            Console.WriteLine(" **************************** ");
+            Console.WriteLine("Cedula: " + cliente.Cedula);
+            Console.WriteLine("Nombre: " + cliente.Nombre);
+            Console.WriteLine("Cuenta: " + cliente.NumeroCuenta);
+            Console.WriteLine("Saldo: $" + cliente.Saldo);
         }
-// ****************** MOSTRAR LOS CLIENTES EN EL BANCO  *****************
+
+        // ******** MOSTRAR CLIENTE YA REGISTRADOS **********************
         public void MostrarClientes()
         {
             listaClientes.MostrarClientes();
         }
 
+        // ******** AGREGAR CLIENTE EN COLA ******************
         public void AgregarCola()
         {
             Console.Write("Numero de cuenta: ");
@@ -369,16 +452,19 @@ namespace BancoConsola
             Console.WriteLine("Cliente agregado a la cola.");
         }
 
+        // ******* ATENDER LOS CLIENTE ***************************
         public void AtenderCliente()
         {
             cola.Desencolar();
         }
 
+        // ******** MOSTRAR LOS CLIENTE EN COLA *****************************
         public void MostrarCola()
         {
             cola.MostrarCola();
         }
 
+        // ******** DEPOSITAR DINERO ********************************
         public void Depositar()
         {
             Console.Write("Numero de cuenta: ");
@@ -392,16 +478,33 @@ namespace BancoConsola
                 return;
             }
 
-            Console.Write("Monto a depositar: ");
-            double monto = Convert.ToDouble(Console.ReadLine());
+            double monto;
+
+            do
+            {
+                Console.Write("Monto a depositar: ");
+
+                if (!double.TryParse(Console.ReadLine(), out monto))
+                {
+                    Console.WriteLine("Ingrese un monto valido.");
+                    monto = -1;
+                }
+
+                if (monto <= 0)
+                {
+                    Console.WriteLine("El monto debe ser mayor a 0.");
+                }
+
+            } while (monto <= 0);
 
             cliente.Saldo += monto;
 
             pila.Push(new Transaccion("deposito", cliente, monto));
 
-            Console.WriteLine("Deposito realizado.");
+            Console.WriteLine("Deposito realizado correctamente.");
         }
 
+        // ****** RETIRO DEL DINERO DE LOS CLIENTES ************************
         public void Retirar()
         {
             Console.Write("Numero de cuenta: ");
@@ -415,8 +518,24 @@ namespace BancoConsola
                 return;
             }
 
-            Console.Write("Monto a retirar: ");
-            double monto = Convert.ToDouble(Console.ReadLine());
+            double monto;
+
+            do
+            {
+                Console.Write("Monto a retirar: ");
+
+                if (!double.TryParse(Console.ReadLine(), out monto))
+                {
+                    Console.WriteLine("Ingrese un monto valido.");
+                    monto = -1;
+                }
+
+                if (monto <= 0)
+                {
+                    Console.WriteLine("El monto debe ser mayor a 0.");
+                }
+
+            } while (monto <= 0);
 
             if (monto > cliente.Saldo)
             {
@@ -427,9 +546,11 @@ namespace BancoConsola
             cliente.Saldo -= monto;
 
             pila.Push(new Transaccion("retiro", cliente, monto));
-            Console.WriteLine("Retiro realizado.");
+
+            Console.WriteLine("Retiro realizado correctamente.");
         }
 
+        // ************* CONSULTAR LOS SALDOS DEL CLIENTE *****************
         public void ConsultarSaldo()
         {
             Console.Write("Numero de cuenta: ");
@@ -446,6 +567,7 @@ namespace BancoConsola
             Console.WriteLine("Saldo actual: $" + cliente.Saldo);
         }
 
+        //  ************ DESHACER LAS TRANSACCIONES **********
         public void DeshacerTransaccion()
         {
             if (pila.EstaVacia())
@@ -459,35 +581,37 @@ namespace BancoConsola
             if (ultima.Tipo == "deposito")
             {
                 ultima.Cliente.Saldo -= ultima.Monto;
-                Console.WriteLine("Deposito deshecho.");
+                Console.WriteLine("Deposito deshecho correctamente.");
             }
             else if (ultima.Tipo == "retiro")
             {
                 ultima.Cliente.Saldo += ultima.Monto;
-                Console.WriteLine("Retiro deshecho.");
+                Console.WriteLine("Retiro deshecho correctamente.");
             }
         }
 
+        // ****** INFORMACION GENERAL DEL BANCO **********
         public void MostrarInformacion()
         {
-            Console.WriteLine("**** INFORMACION DEL BANCO ****** ");
+            Console.WriteLine(" ***** INFORMACION GENERAL ***** ");
             Console.WriteLine("Clientes registrados: " + listaClientes.ContarClientes());
 
-            Console.WriteLine("Dinero total almacenado: $" + listaClientes.TotalDinero());
+            Console.WriteLine("Dinero total del banco: $" + listaClientes.TotalDinero());
         }
     }
 
-    // ******************** METODO PRINCIPAL ************************
+    //***** METODO PRINCIPAL ******
     class Program
     {
         static void Main(string[] args)
         {
             Banco banco = new Banco();
+
             int opcion;
 
             do
             {
-                Console.WriteLine("\n***** BANCO ***** ");
+                Console.WriteLine("\n************ BANCO ************ ");
                 Console.WriteLine("1. Registrar cliente");
                 Console.WriteLine("2. Buscar cliente");
                 Console.WriteLine("3. Mostrar clientes");
@@ -498,15 +622,14 @@ namespace BancoConsola
                 Console.WriteLine("8. Retirar");
                 Console.WriteLine("9. Consultar saldo");
                 Console.WriteLine("10. Deshacer transaccion");
-                Console.WriteLine("11. Informacion del banco"); 
-                
+                Console.WriteLine("11. Informacion general");
                 Console.WriteLine("12. Salir");
 
                 Console.Write("Seleccione una opcion: ");
 
                 if (!int.TryParse(Console.ReadLine(), out opcion))
                 {
-                    Console.WriteLine("Entrada invalida.");
+                    Console.WriteLine("Ingrese una opcion valida.");
                     opcion = 0;
                 }
 
@@ -557,7 +680,7 @@ namespace BancoConsola
                         break;
 
                     case 12:
-                        Console.WriteLine("Saliendo...");
+                        Console.WriteLine("Gracias por usar el sistema.");
                         break;
 
                     default:
